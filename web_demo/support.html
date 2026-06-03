@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>技术支持 - 开晟精密科技</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:"Microsoft YaHei",sans-serif; }
+        .header { background:#1d2939; color:white; padding:20px 50px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; }
+        .logo { font-size:24px; font-weight:bold; }
+        .nav a { color:white; margin-left:30px; text-decoration:none; }
+        .nav a:hover { color:#4d9eff; }
+        .content { max-width:900px; margin:60px auto; padding:40px; background:#f9f9f9; border-radius:10px; }
+        .content h2 { margin-bottom:20px; }
+        .form-item { margin-bottom: 18px; }
+        .form-item label { display: block; font-size: 15px; margin-bottom: 6px; color: #333; }
+        .form-item input, .form-item textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; }
+        .form-item textarea { height: 120px; resize: none; }
+        .submit-btn { background: #1d2939; color: #fff; border: none; padding: 12px 30px; border-radius: 6px; cursor: pointer; font-size: 15px; }
+        .submit-btn:hover { background: #2d3b4f; }
+        .alert-success { background: #d4edda; color: #155724; padding: 12px 20px; border-radius: 6px; margin-bottom: 20px; display: none; }
+        .alert-error { background: #f8d7da; color: #721c24; padding: 12px 20px; border-radius: 6px; margin-bottom: 20px; display: none; }
+        .footer { background:#1d2939; color:white; text-align:center; padding:30px; margin-top:50px; }
+        @media (max-width:768px){ .header{flex-direction:column;gap:15px;} .nav a{margin:0 15px;} }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">开晟（精密科技）</div>
+        <div class="nav">
+            <a href="index.html">首页</a>
+            <a href="product.html">产品介绍</a>
+            <a href="support.html">技术支持</a>
+            <a href="about.html">关于我们</a>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>技术支持 - 需求提交</h2>
+        <p style="margin-bottom:25px;">请填写以下信息，我们将尽快与您联系！</p>
+
+        <div id="successMsg" class="alert-success">✅ 提交成功！我们会尽快联系您。</div>
+        <div id="errorMsg" class="alert-error">❌ 提交失败，请稍后重试</div>
+
+        <form id="contactForm">
+            <div class="form-item">
+                <label>您的姓名</label>
+                <input type="text" id="name" placeholder="请输入姓名" required>
+            </div>
+            <div class="form-item">
+                <label>联系电话</label>
+                <input type="text" id="phone" placeholder="请输入电话" required>
+            </div>
+            <div class="form-item">
+                <label>电子邮箱</label>
+                <input type="email" id="email" placeholder="请输入邮箱">
+            </div>
+            <div class="form-item">
+                <label>公司名称</label>
+                <input type="text" id="company" placeholder="请输入公司名称">
+            </div>
+            <div class="form-item">
+                <label>所需产品</label>
+                <input type="text" id="product" placeholder="例如：五轴联动式齿精加工切削机">
+            </div>
+            <div class="form-item">
+                <label>需求说明 / 留言</label>
+                <textarea id="message" placeholder="请简单描述您的需求"></textarea>
+            </div>
+            <button type="submit" class="submit-btn">提交需求</button>
+        </form>
+    </div>
+
+    <div class="footer">
+        <p>开晟（精密科技）© 2025</p>
+    </div>
+
+    <script>
+        const form = document.getElementById('contactForm');
+        const successMsg = document.getElementById('successMsg');
+        const errorMsg = document.getElementById('errorMsg');
+
+        // ✅ 已替换成你的正确 SendKey（注意是 YO5IVF4，不是 Y05IVF4）
+        const SENDKEY = 'SCT358822T4cJLxAYokwzL9ng54YO5IVF4';
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            successMsg.style.display = 'none';
+            errorMsg.style.display = 'none';
+
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            const company = document.getElementById('company').value;
+            const product = document.getElementById('product').value;
+            const message = document.getElementById('message').value;
+
+            if (!name || !phone) {
+                errorMsg.textContent = '❌ 请填写姓名和联系电话';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            const content = `
+📋 开晟科技 - 新需求通知
+
+👤 姓名：${name}
+📞 电话：${phone}
+📧 邮箱：${email || '未填写'}
+🏢 公司：${company || '未填写'}
+🔧 产品：${product || '未填写'}
+💬 留言：${message || '未填写'}
+
+提交时间：${new Date().toLocaleString()}
+            `;
+
+            try {
+                const response = await fetch(`https://sctapi.ftqq.com/${SENDKEY}.send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        title: '🔔 开晟科技 - 新需求提交', 
+                        desp: content 
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.code === 0) {
+                    successMsg.style.display = 'block';
+                    form.reset();
+                    setTimeout(() => successMsg.style.display = 'none', 3000);
+                } else {
+                    errorMsg.textContent = '❌ 提交失败：' + (result.message || '请稍后重试');
+                    errorMsg.style.display = 'block';
+                }
+            } catch (error) {
+                errorMsg.textContent = '❌ 网络错误，请检查网络后重试';
+                errorMsg.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
